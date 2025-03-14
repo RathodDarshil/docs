@@ -28,6 +28,10 @@
                             {
                                 "group": "Flutter",
                                 "pages": ["sdk/flutter/installation", "sdk/flutter/usage"]
+                            },
+                            {
+                                "group": "Deep Linking",
+                                "pages": ["sdk/deep-linking/deep-linking", "sdk/deep-linking/verification"]
                             }
                         ]
                     },
