@@ -20,6 +20,7 @@
                     {
                         "group": "SDK Documentation",
                         "pages": [
+                            "sdk/migration-guide",
                             {
                                 "group": "React Native",
                                 "pages": ["sdk/react-native/installation", "sdk/react-native/usage"]
