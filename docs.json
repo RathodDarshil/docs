@@ -31,7 +31,7 @@
                             },
                             {
                                 "group": "Deep Linking",
-                                "pages": ["sdk/deep-linking/deep-linking", "sdk/deep-linking/verification"]
+                                "pages": ["sdk/deep-linking/setup", "sdk/deep-linking/verification"]
                             }
                         ]
                     },
