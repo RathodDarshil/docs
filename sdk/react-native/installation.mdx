@@ -1,0 +1,57 @@
+---
+title: "React Native Installation"
+description: "How to install the Linkrunner SDK for React Native"
+---
+
+# React Native SDK Installation
+
+This guide will help you install and set up the Linkrunner SDK in your React Native application.
+
+## Installation
+
+### Step 1: Install Prerequisites
+
+The Linkrunner SDK depends on several packages. Install them with the following command:
+
+```bash
+# Using npm
+npm install react-native-device-info @react-native-community/netinfo @react-native-async-storage/async-storage react-native-play-install-referrer @sparkfabrik/react-native-idfa-aaid
+
+# Using yarn
+yarn add react-native-device-info @react-native-community/netinfo @react-native-async-storage/async-storage react-native-play-install-referrer @sparkfabrik/react-native-idfa-aaid
+```
+
+### Step 2: Install Linkrunner SDK
+
+```bash
+# Using npm
+npm install rn-linkrunner
+
+# Using yarn
+yarn add rn-linkrunner
+```
+
+### Step 3: iOS Configuration
+
+If you're developing for iOS, follow these additional steps:
+
+1. Install pods for the package:
+
+```bash
+cd ios && pod install
+```
+
+2. Add the following code to your `info.plist` file:
+
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>This identifier will be used to deliver personalized ads and improve your app experience.</string>
+```
+
+## Expo Support
+
+If you are using Expo, you will need to use development builds since this package relies on native libraries. Follow the [Expo Development Builds Documentation](https://docs.expo.io/workflow/development-builds/) to get started.
+
+## Next Steps
+
+After installation, proceed to the [Usage Guide](/sdk/react-native/usage) to learn how to initialize and use the SDK in your application.

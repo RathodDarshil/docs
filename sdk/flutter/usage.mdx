@@ -1,0 +1,265 @@
+---
+title: "Flutter Usage"
+description: "How to use the Linkrunner SDK in your Flutter application"
+---
+
+# Using the Flutter SDK
+
+This guide will help you implement Linkrunner functionality in your Flutter application.
+
+## Initializing the SDK
+
+Initialize the Linkrunner SDK when your app starts:
+
+```dart
+import 'package:linkrunner/linkrunner.dart';
+
+Future<void> initLinkrunner() async {
+  try {
+    // Initialize with your project token
+    final initData = await Linkrunner.init('YOUR_PROJECT_TOKEN');
+    print('Linkrunner initialized: $initData');
+  } catch (e) {
+    print('Error initializing Linkrunner: $e');
+  }
+}
+
+// Call this in your app's initialization
+@override
+void initState() {
+  super.initState();
+  initLinkrunner();
+}
+```
+
+## User Registration
+
+Call the `signup` method once after the user has completed your app's onboarding process:
+
+```dart
+Future<void> onSignup() async {
+  try {
+    final result = await Linkrunner.signup(
+      userData: {
+        'id': '123', // Required: User ID
+        'name': 'John Doe', // Optional
+        'phone': '9876543210', // Optional
+        'email': 'user@example.com', // Optional
+      },
+      additionalData: {}, // Optional: Any additional data
+    );
+    print('Signup successful: $result');
+  } catch (e) {
+    print('Error during signup: $e');
+  }
+}
+```
+
+## Setting User Data
+
+Call `setUserData` each time the app opens and the user is logged in:
+
+```dart
+Future<void> setUserData() async {
+  try {
+    await Linkrunner.setUserData(
+      userData: {
+        'id': '123', // Required: User ID
+        'name': 'John Doe', // Optional
+        'phone': '9876543210', // Optional
+        'email': 'user@example.com', // Optional
+      },
+    );
+    print('User data set successfully');
+  } catch (e) {
+    print('Error setting user data: $e');
+  }
+}
+```
+
+## Handling Deferred Deep Links
+
+To handle deferred deep links (links that led to app installation), call this method after your navigation is initialized:
+
+```dart
+Future<void> triggerDeeplink() async {
+  try {
+    final deeplinkResult = await Linkrunner.triggerDeeplink();
+    if (deeplinkResult != null && deeplinkResult.isNotEmpty) {
+      // Handle the deeplink, e.g., navigate to a specific screen
+      print('Deeplink triggered: $deeplinkResult');
+    }
+  } catch (e) {
+    print('Error triggering deeplink: $e');
+  }
+}
+
+// Call this after your navigation is ready
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  if (_isNavigationReady) {
+    triggerDeeplink();
+  }
+}
+```
+
+## Tracking Custom Events
+
+Track custom events in your app:
+
+```dart
+Future<void> trackEvent() async {
+  try {
+    await Linkrunner.trackEvent(
+      'purchase_initiated', // Event name
+      eventData: { // Optional: Event data
+        'product_id': '12345',
+        'category': 'electronics',
+      },
+    );
+    print('Event tracked successfully');
+  } catch (e) {
+    print('Error tracking event: $e');
+  }
+}
+```
+
+## Revenue Tracking
+
+### Capturing Payments
+
+Track payment information:
+
+```dart
+Future<void> capturePayment() async {
+  try {
+    await Linkrunner.capturePayment(
+      amount: 99.99, // Payment amount
+      userId: 'user123', // User identifier
+      paymentId: 'payment456', // Optional: Unique payment identifier
+    );
+    print('Payment captured successfully');
+  } catch (e) {
+    print('Error capturing payment: $e');
+  }
+}
+```
+
+### Removing Payments
+
+Remove payment records (for refunds or cancellations):
+
+```dart
+Future<void> removePayment() async {
+  try {
+    await Linkrunner.removePayment(
+      amount: 99.99, // Payment amount to remove
+      userId: 'user123', // User identifier
+      paymentId: 'payment456', // Optional: Unique payment identifier
+    );
+    print('Payment removed successfully');
+  } catch (e) {
+    print('Error removing payment: $e');
+  }
+}
+```
+
+## Function Placement Guide
+
+| Function                     | Where to Place                   | When to Call                             |
+| ---------------------------- | -------------------------------- | ---------------------------------------- |
+| `Linkrunner.init`            | Main app initState or equivalent | Once when app starts                     |
+| `Linkrunner.signup`          | Onboarding flow                  | Once after user completes onboarding     |
+| `Linkrunner.setUserData`     | Authentication logic             | Every time app opens with logged-in user |
+| `Linkrunner.triggerDeeplink` | After navigation init            | Once after navigation is ready           |
+| `Linkrunner.trackEvent`      | Throughout app                   | When specific user actions occur         |
+| `Linkrunner.capturePayment`  | Payment processing               | When user makes a payment                |
+| `Linkrunner.removePayment`   | Refund flow                      | When payment needs to be removed         |
+
+## Complete Example
+
+Here's a simplified example showing how to integrate Linkrunner in a Flutter app:
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:linkrunner/linkrunner.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Linkrunner Demo',
+      home: HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeLinkrunner();
+  }
+
+  Future<void> _initializeLinkrunner() async {
+    try {
+      final initData = await Linkrunner.init('YOUR_PROJECT_TOKEN');
+      setState(() {
+        _initialized = true;
+      });
+      // Handle any deeplinks after navigation is set up
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        triggerDeeplink();
+      });
+    } catch (e) {
+      print('Error initializing Linkrunner: $e');
+    }
+  }
+
+  Future<void> triggerDeeplink() async {
+    try {
+      await Linkrunner.triggerDeeplink();
+    } catch (e) {
+      print('Error triggering deeplink: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Linkrunner Demo')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Linkrunner ${_initialized ? 'Initialized' : 'Initializing...'}'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await Linkrunner.trackEvent('button_clicked');
+              },
+              child: Text('Track Custom Event'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Support
+
+If you encounter issues during integration, contact us at [darshil@linkrunner.io](mailto:darshil@linkrunner.io).

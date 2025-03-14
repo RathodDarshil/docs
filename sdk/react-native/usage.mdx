@@ -1,0 +1,168 @@
+---
+title: "React Native Usage"
+description: "How to use the Linkrunner SDK in your React Native application"
+---
+
+# Using the React Native SDK
+
+This guide will help you implement Linkrunner functionality in your React Native application.
+
+## Initialization
+
+To initialize the Linkrunner SDK, add this code to your `App.tsx` component:
+
+```javascript
+import linkrunner from "rn-linkrunner";
+
+// Inside your React component
+useEffect(() => {
+    init();
+}, []); // Empty dependency array ensures it runs only once
+
+const init = async () => {
+    const initData = await linkrunner.init("YOUR_PROJECT_TOKEN");
+    console.log("Linkrunner initialized:", initData);
+};
+```
+
+### Response from `linkrunner.init`
+
+The initialization method returns useful data including:
+
+```typescript
+{
+    ip_location_data: {
+        ip: string;
+        city: string;
+        countryLong: string;
+        countryShort: string;
+        latitude: number;
+        longitude: number;
+        region: string;
+        timeZone: string;
+        zipCode: string;
+    }
+    deeplink: string;
+    root_domain: boolean;
+    campaign_data: {
+        id: string;
+        name: string;
+        type: "ORGANIC" | "INORGANIC";
+        ad_network: "META" | "GOOGLE" | null;
+        group_name: string | null;
+        asset_group_name: string | null;
+        asset_name: string | null;
+    }
+}
+```
+
+## User Registration
+
+Call the `signup` method once after the user has completed your app's onboarding process:
+
+```javascript
+const onSignup = async () => {
+    const result = await linkrunner.signup({
+        user_data: {
+            id: "123", // Required: User ID
+            name: "John Doe", // Optional
+            phone: "9876543210", // Optional
+            email: "user@example.com", // Optional
+        },
+        data: {}, // Optional: Any additional data
+    });
+};
+```
+
+## Setting User Data
+
+Call `setUserData` each time the app opens and the user is logged in:
+
+```javascript
+const setUserData = async () => {
+    await linkrunner.setUserData({
+        user_data: {
+            id: "123", // Required: User ID
+            name: "John Doe", // Optional
+            phone: "9876543210", // Optional
+            email: "user@example.com", // Optional
+        },
+    });
+};
+```
+
+## Handling Deferred Deep Links
+
+To handle deferred deep links (links that led to app installation), call this method after your navigation is initialized:
+
+```javascript
+const triggerDeeplink = async () => {
+    await linkrunner.triggerDeeplink();
+};
+
+// Call this in your app after navigation is ready
+useEffect(() => {
+    if (navigationIsReady) {
+        triggerDeeplink();
+    }
+}, [navigationIsReady]);
+```
+
+## Tracking Custom Events
+
+Track custom events in your app:
+
+```javascript
+const trackEvent = async () => {
+    await linkrunner.trackEvent(
+        "purchase_initiated", // Event name
+        { product_id: "12345", category: "electronics" } // Optional: Event data
+    );
+};
+```
+
+## Revenue Tracking
+
+### Capturing Payments
+
+Track payment information:
+
+```javascript
+const capturePayment = async () => {
+    await linkrunner.capturePayment({
+        amount: 99.99, // Payment amount
+        userId: "user123", // User identifier
+        paymentId: "payment456", // Optional: Unique payment identifier
+    });
+};
+```
+
+### Removing Payments
+
+Remove payment records (for refunds or cancellations):
+
+```javascript
+const removePayment = async () => {
+    await linkrunner.removePayment({
+        amount: 99.99, // Payment amount to remove
+        userId: "user123", // User identifier
+        paymentId: "payment456", // Optional: Unique payment identifier
+    });
+};
+```
+
+## Function Placement Guide
+
+| Function                     | Where to Place           | When to Call                             |
+| ---------------------------- | ------------------------ | ---------------------------------------- |
+| `linkrunner.init`            | App.tsx within useEffect | Once when app starts                     |
+| `linkrunner.signup`          | Onboarding flow          | Once after user completes onboarding     |
+| `linkrunner.setUserData`     | Authentication logic     | Every time app opens with logged-in user |
+| `linkrunner.triggerDeeplink` | After navigation init    | Once after navigation is ready           |
+| `linkrunner.trackEvent`      | Throughout app           | When specific user actions occur         |
+| `linkrunner.capturePayment`  | Payment processing       | When user makes a payment                |
+| `linkrunner.removePayment`   | Refund flow              | When payment needs to be removed         |
+
+## Support
+
+If you encounter issues during integration, contact us at [darshil@linkrunner.io](mailto:darshil@linkrunner.io).

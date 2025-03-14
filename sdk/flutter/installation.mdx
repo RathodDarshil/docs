@@ -1,0 +1,89 @@
+---
+title: "Flutter Installation"
+description: "How to install the Linkrunner SDK for Flutter applications"
+---
+
+# Flutter SDK Installation
+
+This guide will help you install and set up the Linkrunner SDK in your Flutter application.
+
+## Requirements
+
+-   Flutter 3.0 or higher
+-   Dart 3.3 or higher
+
+## Installation
+
+### Step 1: Add the Package
+
+Add the Linkrunner package to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+    linkrunner: ^1.0.1 # Use the latest version
+```
+
+### Step 2: Install Dependencies
+
+Run the following command to install the package:
+
+```bash
+flutter pub get
+```
+
+### Step 3: Platform Specific Setup
+
+#### Android Configuration
+
+1. Ensure your project's `minSdkVersion` is at least 21 in your `android/app/build.gradle` file:
+
+```gradle
+android {
+    defaultConfig {
+        minSdkVersion 21
+        // other config...
+    }
+}
+```
+
+2. Add the following permissions to your `AndroidManifest.xml` file:
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
+#### iOS Configuration
+
+1. Update your iOS deployment target to iOS 12.0 or higher in your `ios/Podfile`:
+
+```ruby
+platform :ios, '12.0'
+```
+
+2. Add the following to your `Info.plist` file for App Tracking Transparency:
+
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>This identifier will be used to deliver personalized ads and improve your app experience.</string>
+```
+
+## Dependencies
+
+The Linkrunner SDK uses the following packages:
+
+-   advertising_id
+-   android_play_install_referrer
+-   app_links
+-   connectivity_plus
+-   device_info_plus
+-   http
+-   package_info_plus
+-   shared_preferences
+-   url_launcher
+
+These are automatically installed when you add the Linkrunner SDK to your application.
+
+## Next Steps
+
+After installation, proceed to the [Usage Guide](/sdk/flutter/usage) to learn how to initialize and use the Linkrunner SDK in your Flutter application.

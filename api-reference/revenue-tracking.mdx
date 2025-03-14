@@ -1,0 +1,68 @@
+---
+title: "Revenue Tracking"
+description: "Documentation for Linkrunner Revenue Tracking API"
+---
+
+This documentation is for tracking revenue from your backend only! For tracking revenue from your app please go through the [Flutter](https://pub.dev/packages/linkrunner) or [React Native](https://www.npmjs.com/package/rn-linkrunner) documentation.
+
+## Base URL
+
+```
+https://api.linkrunner.io/api/v1
+```
+
+## Authentication
+
+Generate your server code from [https://www.linkrunner.io/settings?s=data-apis](https://www.linkrunner.io/settings?p_id=4&s=data-apis)
+
+In the request header add the below attribute:
+
+```
+linkrunner-key: YOUR-SERVER-KEY
+```
+
+## Capture payment
+
+```
+POST: /capture-payment
+```
+
+### Request Body
+
+```json
+{
+    "user_id": "666",
+    "payment_id": "ABC", // optional but recommended
+    "amount": 25096 // Send amount in one currency only
+}
+```
+
+**NOTE:** If you accept payments in multiple currencies convert them to one currency before calling the API.
+
+### Responses
+
+1. **201** Payment captured
+2. **401** Invalid server key
+
+## Remove captured payment
+
+```
+POST: /remove-payment
+```
+
+### Request Body
+
+```json
+{
+    "user_id": "666",
+    "payment_id": "ABC"
+}
+```
+
+**NOTE:** `user_id` or `payment_id` is required in order to remove a payment entry. If you pass `user_id`, all the payments attributed to that user will be removed!
+
+### Responses
+
+1. **200** Payment entry/entries deleted
+2. **400** No payment found with the given payment id or user id
+3. **401** Invalid server key
