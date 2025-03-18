@@ -147,6 +147,12 @@ Future<void> capturePayment() async {
 }
 ```
 
+#### Parameters for `Linkrunner.capturePayment`
+
+-   `amount`: double (required) - The payment amount
+-   `userId`: String (required) - Identifier for the user making the payment
+-   `paymentId`: String (optional) - Unique identifier for the payment
+
 ### Removing Payments
 
 Remove payment records (for refunds or cancellations):
@@ -155,7 +161,6 @@ Remove payment records (for refunds or cancellations):
 Future<void> removePayment() async {
   try {
     await Linkrunner.removePayment(
-      amount: 99.99, // Payment amount to remove
       userId: 'user123', // User identifier
       paymentId: 'payment456', // Optional: Unique payment identifier
     );
@@ -165,6 +170,13 @@ Future<void> removePayment() async {
   }
 }
 ```
+
+#### Parameters for `Linkrunner.removePayment`
+
+-   `userId`: String (required) - Identifier for the user whose payment is being removed
+-   `paymentId`: String (optional) - Unique identifier for the payment to be removed
+
+Note: Either `paymentId` or `userId` must be provided when calling `removePayment`. If only `userId` is provided, all payments for that user will be removed.
 
 ## Function Placement Guide
 

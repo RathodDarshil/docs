@@ -167,12 +167,18 @@ Remove payment records (for refunds or cancellations):
 ```javascript
 const removePayment = async () => {
     await linkrunner.removePayment({
-        amount: 99.99, // Payment amount to remove
         userId: "user123", // User identifier
         paymentId: "payment456", // Optional: Unique payment identifier
     });
 };
 ```
+
+#### Parameters for `Linkrunner.removePayment`
+
+-   `userId`: String (required) - Identifier for the user whose payment is being removed
+-   `paymentId`: String (optional) - Unique identifier for the payment to be removed
+
+Note: Either `paymentId` or `userId` must be provided when calling `removePayment`. If only `userId` is provided, all payments for that user will be removed.
 
 ## Function Placement Guide
 
