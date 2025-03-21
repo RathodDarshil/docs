@@ -41,12 +41,15 @@ Call the `signup` method once after the user has completed your app's onboarding
 Future<void> onSignup() async {
   try {
     final result = await Linkrunner.signup(
-      userData: {
-        'id': '123', // Required: User ID
-        'name': 'John Doe', // Optional
-        'phone': '9876543210', // Optional
-        'email': 'user@example.com', // Optional
-      },
+      userData: LRUserData(
+        id: '123', // Required: User ID
+        name: 'John Doe', // Optional
+        phone: '9876543210', // Optional
+        email: 'user@example.com', // Optional
+        mixpanelDistinctId: 'mixpanelDistinctId', // Optional - Mixpanel Distinct ID
+        amplitudeUserId: 'amplitudeUserId', // Optional - Amplitude User ID
+        posthogDistinctId: 'posthogDistinctId', // Optional - PostHog Distinct ID
+      ),
       additionalData: {}, // Optional: Any additional data
     );
     print('Signup successful: $result');
@@ -64,12 +67,15 @@ Call `setUserData` each time the app opens and the user is logged in:
 Future<void> setUserData() async {
   try {
     await Linkrunner.setUserData(
-      userData: {
-        'id': '123', // Required: User ID
-        'name': 'John Doe', // Optional
-        'phone': '9876543210', // Optional
-        'email': 'user@example.com', // Optional
-      },
+      userData: LRUserData(
+        id: '123', // Required: User ID
+        name: 'John Doe', // Optional
+        phone: '9876543210', // Optional
+        email: 'user@example.com', // Optional
+        mixpanelDistinctId: 'mixpanelDistinctId', // Optional - Mixpanel Distinct ID
+        amplitudeUserId: 'amplitudeUserId', // Optional - Amplitude User ID
+        posthogDistinctId: 'posthogDistinctId', // Optional - PostHog Distinct ID
+      ),
     );
     print('User data set successfully');
   } catch (e) {
@@ -113,7 +119,7 @@ Track custom events in your app:
 Future<void> trackEvent() async {
   try {
     await Linkrunner.trackEvent(
-      'purchase_initiated', // Event name
+      eventName: 'purchase_initiated', // Event name
       eventData: { // Optional: Event data
         'product_id': '12345',
         'category': 'electronics',
@@ -136,9 +142,13 @@ Track payment information:
 Future<void> capturePayment() async {
   try {
     await Linkrunner.capturePayment(
-      amount: 99.99, // Payment amount
-      userId: 'user123', // User identifier
-      paymentId: 'payment456', // Optional: Unique payment identifier
+      capturePayment: LRCapturePayment(
+        amount: 99.99, // Payment amount
+        userId: 'user123', // User identifier
+        paymentId: 'payment456', // Optional: Unique payment identifier
+        type: PaymentType.FIRST_PAYMENT, // optional
+        status: PaymentStatus.PAYMENT_COMPLETED, // optional
+      ),
     );
     print('Payment captured successfully');
   } catch (e) {
@@ -152,6 +162,20 @@ Future<void> capturePayment() async {
 -   `amount`: double (required) - The payment amount
 -   `userId`: String (required) - Identifier for the user making the payment
 -   `paymentId`: String (optional) - Unique identifier for the payment
+-   `type`: PaymentType (optional) - Type of payment. Available options:
+    -   `FIRST_PAYMENT` - First payment made by the user
+    -   `WALLET_TOPUP` - Adding funds to a wallet
+    -   `FUNDS_WITHDRAWAL` - Withdrawing funds
+    -   `SUBSCRIPTION_CREATED` - New subscription created
+    -   `SUBSCRIPTION_RENEWED` - Subscription renewal
+    -   `ONE_TIME` - One-time payment
+    -   `RECURRING` - Recurring payment
+    -   `DEFAULT` - Default type (used if not specified)
+-   `status`: PaymentStatus (optional) - Status of the payment. Available options:
+    -   `PAYMENT_INITIATED` - Payment has been initiated
+    -   `PAYMENT_COMPLETED` - Payment completed successfully (default if not specified)
+    -   `PAYMENT_FAILED` - Payment attempt failed
+    -   `PAYMENT_CANCELLED` - Payment was cancelled
 
 ### Removing Payments
 
@@ -197,6 +221,8 @@ Here's a simplified example showing how to integrate Linkrunner in a Flutter app
 ```dart
 import 'package:flutter/material.dart';
 import 'package:linkrunner/linkrunner.dart';
+
+final linkrunner = LinkRunner();
 
 void main() {
   runApp(MyApp());

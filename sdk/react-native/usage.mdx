@@ -69,6 +69,9 @@ const onSignup = async () => {
             name: "John Doe", // Optional
             phone: "9876543210", // Optional
             email: "user@example.com", // Optional
+            mixpanel_distinct_id: "mixpanel_distinct_id", // Optional - Mixpanel Distinct ID
+            amplitude_user_id: "amplitude_user_id", // Optional - Amplitude User ID
+            posthog_distinct_id: "posthog_distinct_id", // Optional - PostHog Distinct ID
         },
         data: {}, // Optional: Any additional data
     });
@@ -87,6 +90,9 @@ const setUserData = async () => {
             name: "John Doe", // Optional
             phone: "9876543210", // Optional
             email: "user@example.com", // Optional
+            mixpanel_distinct_id: "mixpanel_distinct_id", // Optional - Mixpanel Distinct ID
+            amplitude_user_id: "amplitude_user_id", // Optional - Amplitude User ID
+            posthog_distinct_id: "posthog_distinct_id", // Optional - PostHog Distinct ID
         },
     });
 };
