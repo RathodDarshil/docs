@@ -34,7 +34,9 @@ POST: /capture-payment
 {
     "user_id": "666",
     "payment_id": "ABC", // optional but recommended
-    "amount": 25096 // Send amount in one currency only
+    "amount": 25096, // Send amount in one currency only
+    "type": "FIRST_PAYMENT", // optional
+    "status": "PAYMENT_COMPLETED" // optional
 }
 ```
 
