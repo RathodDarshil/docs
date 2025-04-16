@@ -1,0 +1,133 @@
+---
+title: "Events Capture API"
+description: "Documentation for Linkrunner Event Capture API"
+icon: "shuffle"
+---
+
+This documentation is for tracking custom events from your backend only! For tracking events from your app please go through the [Flutter](https://docs.linkrunner.io/sdk/flutter/usage#tracking-custom-events) or [React Native](https://docs.linkrunner.io/sdk/react-native/usage#tracking-custom-events) documentation.
+
+## Base URL
+
+```
+https://api.linkrunner.io/api/v1
+```
+
+## Authentication
+
+Generate your server key from [https://www.linkrunner.io/settings?s=data-apis](https://www.linkrunner.io/settings?p_id=4&s=data-apis)
+
+In the request header add the below attribute:
+
+```
+linkrunner-key: YOUR-SERVER-KEY
+```
+
+## Capture Event
+
+```
+POST: /capture-event
+```
+
+### Request Body
+
+```json
+{
+    "event_name": "product_viewed",
+    "event_data": {
+        "product_id": "ABC123",
+        "category": "electronics",
+        "price": 249.99,
+        "currency": "USD",
+        "is_featured": true
+    },
+    "user_id": "user_12345"
+}
+```
+
+| Parameter  | Type   | Description                                               |
+| ---------- | ------ | --------------------------------------------------------- |
+| event_name | string | **Required**. Name of the event to track                  |
+| event_data | object | **Optional**. Additional data associated with the event   |
+| user_id    | string | **Required**. User identifier to associate with the event |
+
+### Responses
+
+1. **201** Event captured successfully
+2. **400** Missing required parameters
+3. **401** Invalid server key
+
+#### Sample Response
+
+Upon successful event capture, the API returns:
+
+```json
+{
+    "msg": "Event capture request received!",
+    "status": 200,
+    "data": null
+}
+```
+
+## Common Event Names
+
+Here are some common event names you might want to track:
+
+| Event Name             | Description                        |
+| ---------------------- | ---------------------------------- |
+| `purchase_initiated`   | User starts a purchase             |
+| `purchase_completed`   | User completes a purchase          |
+| `item_viewed`          | User views an item/product         |
+| `cart_added`           | User adds item to cart             |
+| `checkout_started`     | User starts checkout               |
+| `search_performed`     | User performs a search             |
+| `content_viewed`       | User views content                 |
+| `level_completed`      | User completes a level (for games) |
+| `achievement_unlocked` | User unlocks an achievement        |
+| `user_referred`        | User refers someone                |
+
+## Best Practices
+
+1. **Consistent naming**: Use consistent naming conventions for your events (snake_case is recommended)
+2. **Structured data**: Include structured data with each event to get more insights
+3. **Meaningful events**: Track events that provide valuable insights into user behavior
+4. **Data efficiency**: Don't include sensitive or unnecessary data in event payloads
+
+## Example
+
+### Tracking a Purchase Event
+
+```javascript
+// Using fetch API
+fetch("https://api.linkrunner.io/api/v1/capture-event", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "linkrunner-key": "YOUR-SERVER-KEY",
+    },
+    body: JSON.stringify({
+        event_name: "purchase_completed",
+        event_data: {
+            order_id: "ORD-12345",
+            product_ids: ["P-001", "P-002"],
+            total_amount: 125.99,
+            currency: "USD",
+            payment_method: "credit_card",
+        },
+        user_id: "user_12345",
+    }),
+})
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error("Error:", error));
+```
+
+## Error Handling
+
+The API will return appropriate HTTP status codes along with error messages when issues occur:
+
+-   **400 Bad Request**: Check your request parameters
+-   **401 Unauthorized**: Verify your server key
+-   **429 Too Many Requests**: You've exceeded the rate limit, please try again later
+-   **500 Internal Server Error**: Contact support if this persists
+
+For any help please reach out to [darshil@linkrunner.io](mailto:darshil@linkrunner.io)

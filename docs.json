@@ -37,7 +37,11 @@
                     },
                     {
                         "group": "API Documentation",
-                        "pages": ["api-reference/data-apis", "api-reference/revenue-tracking"]
+                        "pages": [
+                            "api-reference/data-apis",
+                            "api-reference/revenue-tracking",
+                            "api-reference/event-capture"
+                        ]
                     }
                 ]
             }
