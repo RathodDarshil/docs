@@ -40,7 +40,8 @@
                         "pages": [
                             "api-reference/data-apis",
                             "api-reference/revenue-tracking",
-                            "api-reference/event-capture"
+                            "api-reference/event-capture",
+                            "api-reference/create-campaign"
                         ]
                     }
                 ]
