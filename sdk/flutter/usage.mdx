@@ -37,6 +37,18 @@ void initState() {
 
 Call the `signup` method once after the user has completed your app's onboarding process:
 
+It is strongly recommended to use the integrated platform's identify function to set a persistent user_id once it becomes available (typically after signup or login).
+
+- [Mixpanel - ID Management & User Identification](https://docs.mixpanel.com/docs/tracking-methods/id-management/identifying-users-simplified)
+- [PostHog - How User Identification Works](https://posthog.com/docs/product-analytics/identify#how-identify-works)
+- [Amplitude - Identify Users Documentation](https://amplitude.com/docs/get-started/identify-users)
+
+If the platform's identifier function is not called, you must provide a user identifier for Mixpanel, PostHog, and Amplitude integration.
+
+- mixpanelDistinctId for Mixpanel
+- amplitudeDeviceId for Amplitude
+- posthogDistinctId for PostHog
+
 ```dart
 Future<void> onSignup() async {
   try {
@@ -46,8 +58,11 @@ Future<void> onSignup() async {
         name: 'John Doe', // Optional
         phone: '9876543210', // Optional
         email: 'user@example.com', // Optional
+        // These properties are used to track reinstalls
+        userCreatedAt: '2024-01-01T00:00:00Z', // Optional
+        isFirstTimeUser: true, // Optional
         mixpanelDistinctId: 'mixpanelDistinctId', // Optional - Mixpanel Distinct ID
-        amplitudeUserId: 'amplitudeUserId', // Optional - Amplitude User ID
+        amplitudeDeviceId: 'amplitudeDeviceId', // Optional - Amplitude User ID
         posthogDistinctId: 'posthogDistinctId', // Optional - PostHog Distinct ID
       ),
       additionalData: {}, // Optional: Any additional data
@@ -73,7 +88,7 @@ Future<void> setUserData() async {
         phone: '9876543210', // Optional
         email: 'user@example.com', // Optional
         mixpanelDistinctId: 'mixpanelDistinctId', // Optional - Mixpanel Distinct ID
-        amplitudeUserId: 'amplitudeUserId', // Optional - Amplitude User ID
+        amplitudeDeviceId: 'amplitudeDeviceId', // Optional - Amplitude User ID
         posthogDistinctId: 'posthogDistinctId', // Optional - PostHog Distinct ID
       ),
     );
