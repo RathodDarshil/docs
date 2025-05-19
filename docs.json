@@ -1,93 +1,89 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Linkrunner",
-  "colors": {
-    "primary": "#7A77FF",
-    "light": "#7A77FF",
-    "dark": "#7A77FF"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Documentation",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": ["introduction"]
-          },
-          {
-            "group": "SDK Documentation",
-            "pages": [
-              "sdk/migration-guide",
-              {
-                "group": "React Native",
-                "pages": [
-                  "sdk/react-native/installation",
-                  "sdk/react-native/usage"
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "Linkrunner",
+    "colors": {
+        "primary": "#7A77FF",
+        "light": "#7A77FF",
+        "dark": "#7A77FF"
+    },
+    "favicon": "/favicon.svg",
+    "navigation": {
+        "tabs": [
+            {
+                "tab": "Documentation",
+                "groups": [
+                    {
+                        "group": "Getting Started",
+                        "pages": ["introduction"]
+                    },
+                    {
+                        "group": "SDK Documentation",
+                        "pages": [
+                            "sdk/migration-guide",
+                            {
+                                "group": "React Native",
+                                "pages": ["sdk/react-native/installation", "sdk/react-native/usage"]
+                            },
+                            {
+                                "group": "Flutter",
+                                "pages": ["sdk/flutter/installation", "sdk/flutter/usage"]
+                            },
+                            {
+                                "group": "iOS",
+                                "pages": ["sdk/ios/installation", "sdk/ios/usage"]
+                            },
+                            {
+                                "group": "Deep Linking",
+                                "pages": ["sdk/deep-linking/setup", "sdk/deep-linking/verification"]
+                            }
+                        ]
+                    },
+                    {
+                        "group": "API Documentation",
+                        "pages": [
+                            "api-reference/data-apis",
+                            "api-reference/revenue-tracking",
+                            "api-reference/event-capture",
+                            "api-reference/create-campaign"
+                        ]
+                    },
+                    {
+                        "group": "Features",
+                        "pages": ["feature/custom-store-listing"]
+                    }
                 ]
-              },
-              {
-                "group": "Flutter",
-                "pages": ["sdk/flutter/installation", "sdk/flutter/usage"]
-              },
-              {
-                "group": "Deep Linking",
-                "pages": [
-                  "sdk/deep-linking/setup",
-                  "sdk/deep-linking/verification"
+            },
+            {
+                "tab": "Feature Releases",
+                "groups": [
+                    {
+                        "group": "Overview",
+                        "pages": ["feature-releases"]
+                    },
+                    {
+                        "group": "Latest Releases",
+                        "pages": ["feature/latest/q1-2025"]
+                    }
                 ]
-              }
-            ]
-          },
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/data-apis",
-              "api-reference/revenue-tracking",
-              "api-reference/event-capture",
-              "api-reference/create-campaign"
-            ]
-          },
-          {
-            "group": "Features",
-            "pages": [
-              "feature/custom-store-listing"
-            ]
-          }
+            }
         ]
-      },
-      {
-        "tab": "Feature Releases",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["feature-releases"]
-          },
-          {
-            "group": "Latest Releases",
-            "pages": ["feature/latest/q1-2025"]
-          }
-        ]
-      }
-    ]
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:darshil@linkrunner.io"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://www.linkrunner.io"
+    },
+    "logo": {
+        "light": "/logo/light.svg",
+        "dark": "/logo/dark.svg"
+    },
+    "navbar": {
+        "links": [
+            {
+                "label": "Support",
+                "href": "mailto:darshil@linkrunner.io"
+            }
+        ],
+        "primary": {
+            "type": "button",
+            "label": "Dashboard",
+            "href": "https://www.linkrunner.io"
+        }
     }
-  }
 }

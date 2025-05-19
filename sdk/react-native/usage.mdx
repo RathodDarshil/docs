@@ -12,6 +12,8 @@ This guide will help you implement Linkrunner functionality in your React Native
 
 To initialize the Linkrunner SDK, add this code to your `App.tsx` component:
 
+You can find your project token [here](https://www.linkrunner.io/dashboard?s=members&m=documentation).
+
 ```javascript
 import linkrunner from "rn-linkrunner";
 
@@ -100,11 +102,11 @@ const setUserData = async () => {
 
 ## Handling Deferred Deep Links
 
-To handle deferred deep links (links that led to app installation), call this method after your navigation is initialized:
+`triggerDeeplink` is an optional function which has to be called once after the user onboards and the main stack is ready for navigation. This function handles deferred deep links (links that led to app installation):
 
 ```javascript
 const triggerDeeplink = async () => {
-    await linkrunner.triggerDeeplink();
+    linkrunner.triggerDeeplink();
 };
 
 // Call this in your app after navigation is ready
@@ -148,23 +150,23 @@ const capturePayment = async () => {
 
 #### Parameters for `linkrunner.capturePayment`
 
--   `amount`: number (required) - The payment amount
--   `userId`: string (required) - Identifier for the user making the payment
--   `paymentId`: string (optional) - Unique identifier for the payment
--   `type`: string (optional) - Type of payment. Available options:
-    -   `FIRST_PAYMENT` - First payment made by the user
-    -   `WALLET_TOPUP` - Adding funds to a wallet
-    -   `FUNDS_WITHDRAWAL` - Withdrawing funds
-    -   `SUBSCRIPTION_CREATED` - New subscription created
-    -   `SUBSCRIPTION_RENEWED` - Subscription renewal
-    -   `ONE_TIME` - One-time payment
-    -   `RECURRING` - Recurring payment
-    -   `DEFAULT` - Default type (used if not specified)
--   `status`: string (optional) - Status of the payment. Available options:
-    -   `PAYMENT_INITIATED` - Payment has been initiated
-    -   `PAYMENT_COMPLETED` - Payment completed successfully (default if not specified)
-    -   `PAYMENT_FAILED` - Payment attempt failed
-    -   `PAYMENT_CANCELLED` - Payment was cancelled
+- `amount`: number (required) - The payment amount
+- `userId`: string (required) - Identifier for the user making the payment
+- `paymentId`: string (optional) - Unique identifier for the payment
+- `type`: string (optional) - Type of payment. Available options:
+    - `FIRST_PAYMENT` - First payment made by the user
+    - `WALLET_TOPUP` - Adding funds to a wallet
+    - `FUNDS_WITHDRAWAL` - Withdrawing funds
+    - `SUBSCRIPTION_CREATED` - New subscription created
+    - `SUBSCRIPTION_RENEWED` - Subscription renewal
+    - `ONE_TIME` - One-time payment
+    - `RECURRING` - Recurring payment
+    - `DEFAULT` - Default type (used if not specified)
+- `status`: string (optional) - Status of the payment. Available options:
+    - `PAYMENT_INITIATED` - Payment has been initiated
+    - `PAYMENT_COMPLETED` - Payment completed successfully (default if not specified)
+    - `PAYMENT_FAILED` - Payment attempt failed
+    - `PAYMENT_CANCELLED` - Payment was cancelled
 
 ### Removing Payments
 
@@ -181,8 +183,8 @@ const removePayment = async () => {
 
 #### Parameters for `Linkrunner.removePayment`
 
--   `userId`: String (required) - Identifier for the user whose payment is being removed
--   `paymentId`: String (optional) - Unique identifier for the payment to be removed
+- `userId`: String (required) - Identifier for the user whose payment is being removed
+- `paymentId`: String (optional) - Unique identifier for the payment to be removed
 
 Note: Either `paymentId` or `userId` must be provided when calling `removePayment`. If only `userId` is provided, all payments for that user will be removed.
 

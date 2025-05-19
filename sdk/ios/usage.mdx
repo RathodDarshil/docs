@@ -1,0 +1,311 @@
+---
+title: "iOS Usage"
+description: "How to use the Linkrunner SDK in your iOS app"
+icon: "swift"
+---
+
+This guide will help you implement Linkrunner functionality in your native iOS application.
+
+## Initialization
+
+Initialize the Linkrunner SDK in your app's startup code, typically in your `AppDelegate` or `SceneDelegate`:
+
+You can find your project token [here](https://www.linkrunner.io/dashboard?s=members&m=documentation).
+
+```swift
+import Linkrunner
+import SwiftUI
+
+@main
+struct MyApp: App {
+    init() {
+        Task {
+            do {
+                let initResponse = try await LinkrunnerSDK.shared.initialize(token: "YOUR_PROJECT_TOKEN")
+                print("Linkrunner initialized successfully:", initResponse)
+            } catch {
+                print("Error initializing Linkrunner:", error)
+            }
+        }
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+### Response from initialize
+
+The initialization method returns useful data including:
+
+```swift
+struct LRInitResponse: Codable, Sendable {
+    let attributionSource: String
+    let campaignData: CampaignData?
+    let deeplink: String?
+    let ipLocationData: LRIPLocationData
+    let rootDomain: Bool
+}
+```
+
+## User Registration
+
+Call the `signup` method once after the user has completed your app's onboarding process:
+
+```swift
+func onSignup() async {
+    do {
+        let userData = UserData(
+            id: "123", // Required: User ID
+            name: "John Doe", // Optional
+            phone: "9876543210", // Optional
+            email: "user@example.com" // Optional
+        )
+
+        let result = try await LinkrunnerSDK.shared.signup(
+            userData: userData,
+            additionalData: [:] // Optional: Any additional data
+        )
+
+        print("Signup successful:", result)
+    } catch {
+        print("Error during signup:", error)
+    }
+}
+```
+
+## Setting User Data
+
+Call `setUserData` each time the app opens and the user is logged in:
+
+```swift
+func setUserData() async {
+    do {
+        let userData = UserData(
+            id: "123", // Required: User ID
+            name: "John Doe", // Optional
+            phone: "9876543210", // Optional
+            email: "user@example.com" // Optional
+        )
+
+        try await LinkrunnerSDK.shared.setUserData(userData)
+        print("User data set successfully")
+    } catch {
+        print("Error setting user data:", error)
+    }
+}
+```
+
+## Handling Deferred Deep Links
+
+`triggerDeeplink` is an optional function which has to be called once after the user onboards and the main stack is ready for navigation. This function handles deferred deep links (links that led to app installation):
+
+```swift
+func triggerDeeplink() async {
+    await LinkrunnerSDK.shared.triggerDeeplink()
+}
+
+// Call this after your navigation is ready to trigger the deeplink
+override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    Task {
+        await triggerDeeplink()
+    }
+}
+```
+
+## Tracking Custom Events
+
+Track custom events in your app:
+
+```swift
+func trackEvent() async {
+    do {
+        try await LinkrunnerSDK.shared.trackEvent(
+            eventName: "purchase_initiated", // Event name
+            eventData: [ // Optional: Event data
+                "product_id": "12345",
+                "category": "electronics"
+            ]
+        )
+        print("Event tracked successfully")
+    } catch {
+        print("Error tracking event:", error)
+    }
+}
+```
+
+## Revenue Tracking
+
+### Capturing Payments
+
+Track payment information:
+
+```swift
+func capturePayment() async {
+    do {
+        try await LinkrunnerSDK.shared.capturePayment(
+            amount: 99.99, // Payment amount
+            userId: "user123", // User identifier
+            paymentId: "payment456", // Optional: Unique payment identifier
+            type: .firstPayment, // optional
+            status: .completed // optional
+        )
+        print("Payment captured successfully")
+    } catch {
+        print("Error capturing payment:", error)
+    }
+}
+```
+
+#### Available Payment Types
+
+```swift
+public enum PaymentType: String, Sendable {
+    case firstPayment = "FIRST_PAYMENT"
+    case walletTopup = "WALLET_TOPUP"
+    case fundsWithdrawal = "FUNDS_WITHDRAWAL"
+    case subscriptionCreated = "SUBSCRIPTION_CREATED"
+    case subscriptionRenewed = "SUBSCRIPTION_RENEWED"
+    case oneTime = "ONE_TIME"
+    case recurring = "RECURRING"
+    case `default` = "DEFAULT"
+}
+```
+
+#### Available Payment Statuses
+
+```swift
+public enum PaymentStatus: String, Sendable {
+    case initiated = "PAYMENT_INITIATED"
+    case completed = "PAYMENT_COMPLETED"
+    case failed = "PAYMENT_FAILED"
+    case cancelled = "PAYMENT_CANCELLED"
+}
+```
+
+### Removing Payments
+
+Remove payment records (for refunds or cancellations):
+
+```swift
+func removePayment() async {
+    do {
+        try await LinkrunnerSDK.shared.removePayment(
+            userId: "user123", // User identifier
+            paymentId: "payment456" // Optional: Unique payment identifier
+        )
+        print("Payment removed successfully")
+    } catch {
+        print("Error removing payment:", error)
+    }
+}
+```
+
+## Enhanced Privacy Controls
+
+The SDK offers options to enhance user privacy:
+
+```swift
+// Enable PII (Personally Identifiable Information) hashing
+LinkrunnerSDK.shared.enablePIIHashing(true)
+
+// Check if PII hashing is enabled
+let isHashingEnabled = LinkrunnerSDK.shared.isPIIHashingEnabled()
+```
+
+When PII hashing is enabled, sensitive user data like name, email, and phone number are hashed using SHA-256 before being sent to Linkrunner servers.
+
+## Function Placement Guide
+
+| Function                               | Where to Place        | When to Call                                             |
+| -------------------------------------- | --------------------- | -------------------------------------------------------- |
+| `LinkrunnerSDK.shared.initialize`      | App initialization    | Once when app starts                                     |
+| `LinkrunnerSDK.shared.signup`          | Onboarding flow       | Once after user completes onboarding                     |
+| `LinkrunnerSDK.shared.setUserData`     | Authentication logic  | Every time app opens with logged-in user                 |
+| `LinkrunnerSDK.shared.triggerDeeplink` | After navigation init | Once after your navigation is ready to handle deep links |
+| `LinkrunnerSDK.shared.trackEvent`      | Throughout app        | When specific user actions occur                         |
+| `LinkrunnerSDK.shared.capturePayment`  | Payment processing    | When user makes a payment                                |
+| `LinkrunnerSDK.shared.removePayment`   | Refund flow           | When payment needs to be removed                         |
+
+## Complete Example
+
+Here's a simplified example showing how to integrate Linkrunner in a SwiftUI iOS app:
+
+You can find your project token [here](https://www.linkrunner.io/dashboard?s=members&m=documentation).
+
+```swift
+import SwiftUI
+import Linkrunner
+
+@main
+struct MyApp: App {
+    init() {
+        Task {
+            await initializeLinkrunner()
+        }
+    }
+
+    func initializeLinkrunner() async {
+        do {
+            let initResponse = try await LinkrunnerSDK.shared.initialize(token: "YOUR_PROJECT_TOKEN")
+            print("Linkrunner initialized successfully:", initResponse)
+        } catch {
+            print("Error initializing Linkrunner:", error)
+        }
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+
+struct ContentView: View {
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Linkrunner Demo")
+                    .font(.largeTitle)
+
+                Button("Track Event") {
+                    Task {
+                        await trackCustomEvent()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding()
+            .onAppear {
+                Task {
+                    await triggerDeeplink()
+                }
+            }
+        }
+    }
+
+    func triggerDeeplink() async {
+        await LinkrunnerSDK.shared.triggerDeeplink()
+    }
+
+    func trackCustomEvent() async {
+        do {
+            try await LinkrunnerSDK.shared.trackEvent(
+                eventName: "button_clicked",
+                eventData: ["screen": "home"]
+            )
+            print("Event tracked successfully")
+        } catch {
+            print("Error tracking event:", error)
+        }
+    }
+}
+```
+
+## Support
+
+If you encounter issues during integration, contact us at [darshil@linkrunner.io](mailto:darshil@linkrunner.io).
