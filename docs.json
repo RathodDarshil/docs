@@ -34,6 +34,10 @@
                                 "pages": ["sdk/ios/installation", "sdk/ios/usage"]
                             },
                             {
+                                "group": "Android",
+                                "pages": ["sdk/android/installation", "sdk/android/usage"]
+                            },
+                            {
                                 "group": "Deep Linking",
                                 "pages": ["sdk/deep-linking/setup", "sdk/deep-linking/verification"]
                             }

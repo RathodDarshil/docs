@@ -1,0 +1,347 @@
+---
+title: "Android Usage"
+description: "How to use the Linkrunner SDK in your Android app"
+icon: "android"
+---
+
+# Using the Android SDK
+
+This guide will help you implement Linkrunner functionality in your native Android application.
+
+## Initialization
+
+Initialize the Linkrunner SDK in your application, typically in your `Application` class or main activity:
+
+You can find your project token [here](https://www.linkrunner.io/dashboard?s=members&m=documentation).
+
+```kotlin
+import android.app.Application
+import com.linkrunner.sdk.LinkRunner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        // Initialize LinkRunner
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val initResponse = LinkRunner.getInstance().init(
+                    context = applicationContext,
+                    token = "YOUR_PROJECT_TOKEN"
+                )
+
+                initResponse.onSuccess { response ->
+                    // Handle successful initialization
+                    println("LinkRunner initialized successfully: $response")
+                }.onFailure { error ->
+                    // Handle initialization error
+                    println("Error initializing LinkRunner: ${error.message}")
+                }
+            } catch (e: Exception) {
+                println("Exception during initialization: ${e.message}")
+            }
+        }
+    }
+}
+```
+
+### Response from `init`
+
+The initialization method returns useful data including:
+
+```kotlin
+data class InitResponse(
+    val campaignData: ClientCampaignData? = null,
+    val ipLocationData: IPLocationData? = null,
+    val deeplink: String? = null,
+    val rootDomain: Boolean? = null
+)
+```
+
+## User Registration
+
+Call the `signup` method once after the user has completed your app's onboarding process:
+
+```kotlin
+private fun onSignup() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val userData = UserDataRequest(
+                id = "123", // Required: User ID
+                name = "John Doe", // Optional
+                phone = "9876543210", // Optional
+                email = "user@example.com", // Optional
+                mixpanelDistinctId = "mixpanel_distinct_id", // Optional - Mixpanel Distinct ID
+                amplitudeDeviceId = "amplitude_device_id", // Optional - Amplitude User ID
+                posthogDistinctId = "posthog_distinct_id" // Optional - PostHog Distinct ID
+            )
+
+            val result = LinkRunner.getInstance().signup(
+                userData = userData,
+                additionalData = mapOf("custom_field" to "custom_value") // Optional: Any additional data
+            )
+
+            result.onSuccess {
+                println("Signup successful")
+            }.onFailure { error ->
+                println("Error during signup: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception during signup: ${e.message}")
+        }
+    }
+}
+```
+
+## Setting User Data
+
+Call `setUserData` each time the app opens and the user is logged in:
+
+```kotlin
+private fun setUserData() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val userData = UserDataRequest(
+                id = "123", // Required: User ID
+                name = "John Doe", // Optional
+                phone = "9876543210", // Optional
+                email = "user@example.com", // Optional
+                mixpanelDistinctId = "mixpanel_distinct_id", // Optional - Mixpanel Distinct ID
+                amplitudeDeviceId = "amplitude_device_id", // Optional - Amplitude User ID
+                posthogDistinctId = "posthog_distinct_id" // Optional - PostHog Distinct ID
+            )
+
+            val result = LinkRunner.getInstance().setUserData(userData)
+
+            result.onSuccess {
+                println("User data set successfully")
+            }.onFailure { error ->
+                println("Error setting user data: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception setting user data: ${e.message}")
+        }
+    }
+}
+```
+
+## Tracking Custom Events
+
+Track custom events in your app:
+
+```kotlin
+private fun trackEvent() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val result = LinkRunner.getInstance().trackEvent(
+                eventName = "purchase_initiated", // Event name
+                eventData = mapOf( // Optional: Event data
+                    "product_id" to "12345",
+                    "category" to "electronics"
+                )
+            )
+
+            result.onSuccess {
+                println("Event tracked successfully")
+            }.onFailure { error ->
+                println("Error tracking event: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception tracking event: ${e.message}")
+        }
+    }
+}
+```
+
+## Revenue Tracking
+
+### Capturing Payments
+
+Track payment information:
+
+```kotlin
+private fun capturePayment() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val paymentData = CapturePaymentRequest(
+                paymentId = "payment456", // Optional: Unique payment identifier
+                userId = "user123", // User identifier
+                amount = 99.99 // Payment amount
+            )
+
+            val result = LinkRunner.getInstance().capturePayment(paymentData)
+
+            result.onSuccess {
+                println("Payment captured successfully")
+            }.onFailure { error ->
+                println("Error capturing payment: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception capturing payment: ${e.message}")
+        }
+    }
+}
+```
+
+### Removing Payments
+
+Remove payment records (for refunds or cancellations):
+
+```kotlin
+private fun removePayment() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val removePayment = RemovePaymentRequest(
+                paymentId = "payment456", // Optional: Unique payment identifier
+                userId = "user123" // Optional: User identifier
+            )
+
+            val result = LinkRunner.getInstance().removePayment(removePayment)
+
+            result.onSuccess {
+                println("Payment removed successfully")
+            }.onFailure { error ->
+                println("Error removing payment: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception removing payment: ${e.message}")
+        }
+    }
+}
+```
+
+Note: Either `paymentId` or `userId` must be provided when calling `removePayment`. If only `userId` is provided, all payments for that user will be removed.
+
+## Enhanced Privacy Controls
+
+The SDK offers options to enhance user privacy:
+
+```kotlin
+// Enable PII (Personally Identifiable Information) hashing
+LinkRunner.getInstance().enablePIIHashing(true)
+
+// Check if PII hashing is enabled
+val isHashingEnabled = LinkRunner.getInstance().isPIIHashingEnabled()
+```
+
+When PII hashing is enabled, sensitive user data like name, email, and phone number are hashed using SHA-256 before being sent to Linkrunner servers.
+
+## Function Placement Guide
+
+| Function                                  | Where to Place       | When to Call                             |
+| ----------------------------------------- | -------------------- | ---------------------------------------- |
+| `LinkRunner.getInstance().init`           | Application class    | Once when app starts                     |
+| `LinkRunner.getInstance().signup`         | Onboarding flow      | Once after user completes onboarding     |
+| `LinkRunner.getInstance().setUserData`    | Authentication logic | Every time app opens with logged-in user |
+| `LinkRunner.getInstance().trackEvent`     | Throughout app       | When specific user actions occur         |
+| `LinkRunner.getInstance().capturePayment` | Payment processing   | When user makes a payment                |
+| `LinkRunner.getInstance().removePayment`  | Refund flow          | When payment needs to be removed         |
+
+## Complete Example
+
+Here's a simplified example showing how to integrate Linkrunner in a native Android app:
+
+You can find your project token [here](https://www.linkrunner.io/dashboard?s=members&m=documentation).
+
+```kotlin
+import android.app.Application
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.linkrunner.sdk.LinkRunner
+import com.linkrunner.sdk.models.request.UserDataRequest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        // Initialize LinkRunner
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                LinkRunner.getInstance().init(
+                    context = applicationContext,
+                    token = "YOUR_PROJECT_TOKEN"
+                )
+            } catch (e: Exception) {
+                println("Error initializing LinkRunner: ${e.message}")
+            }
+        }
+    }
+}
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Button to track an event
+        findViewById<android.widget.Button>(R.id.trackEventButton).setOnClickListener {
+            trackCustomEvent()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Trigger deeplink when navigation is ready
+        triggerDeeplink()
+
+        // Set user data if user is logged in
+        if (isUserLoggedIn()) {
+            setUserData()
+        }
+    }
+
+    private fun isUserLoggedIn(): Boolean {
+        // Your login check logic
+        return true
+    }
+
+    private fun setUserData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val userData = UserDataRequest(
+                    id = "123",
+                    name = "John Doe",
+                    email = "user@example.com"
+                )
+
+                LinkRunner.getInstance().setUserData(userData)
+            } catch (e: Exception) {
+                println("Error setting user data: ${e.message}")
+            }
+        }
+    }
+
+    private fun triggerDeeplink() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                LinkRunner.getInstance().triggerDeeplink()
+            } catch (e: Exception) {
+                println("Error triggering deeplink: ${e.message}")
+            }
+        }
+    }
+
+    private fun trackCustomEvent() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                LinkRunner.getInstance().trackEvent(
+                    eventName = "button_clicked",
+                    eventData = mapOf("screen" to "main")
+                )
+            } catch (e: Exception) {
+                println("Error tracking event: ${e.message}")
+            }
+        }
+    }
+}
+```
+
+## Support
+
+If you encounter issues during integration, contact us at [darshil@linkrunner.io](mailto:darshil@linkrunner.io).
