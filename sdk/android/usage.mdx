@@ -65,6 +65,18 @@ data class InitResponse(
 
 Call the `signup` method once after the user has completed your app's onboarding process:
 
+It is strongly recommended to use the integrated platform's identify function to set a persistent user_id once it becomes available (typically after signup or login).
+
+- [Mixpanel - ID Management & User Identification](https://docs.mixpanel.com/docs/tracking-methods/id-management/identifying-users-simplified)
+- [PostHog - How User Identification Works](https://posthog.com/docs/product-analytics/identify#how-identify-works)
+- [Amplitude - Identify Users Documentation](https://amplitude.com/docs/get-started/identify-users)
+
+If the platform's identifier function is not called, you must provide a user identifier for Mixpanel, PostHog, and Amplitude integration.
+
+- mixpanelDistinctId for Mixpanel
+- posthogDistinctId for PostHog
+- amplitudeDeviceId for Amplitude
+
 ```kotlin
 private fun onSignup() {
     CoroutineScope(Dispatchers.IO).launch {
@@ -77,6 +89,8 @@ private fun onSignup() {
                 mixpanelDistinctId = "mixpanel_distinct_id", // Optional - Mixpanel Distinct ID
                 amplitudeDeviceId = "amplitude_device_id", // Optional - Amplitude User ID
                 posthogDistinctId = "posthog_distinct_id" // Optional - PostHog Distinct ID
+                userCreatedAt = "2024-01-01T00:00:00Z", // Optional
+                isFirstTimeUser = true, // Optional
             )
 
             val result = LinkRunner.getInstance().signup(
