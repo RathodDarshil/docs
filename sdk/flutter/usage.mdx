@@ -236,16 +236,16 @@ Note: Either `paymentId` or `userId` must be provided when calling `removePaymen
 
 ## Function Placement Guide
 
-| Function                     | Where to Place                   | When to Call                             |
-| ---------------------------- | -------------------------------- | ---------------------------------------- |
-| `Linkrunner.init`            | Main app initState or equivalent | Once when app starts                     |
-| `Linkrunner.signup`          | Onboarding flow                  | Once after user completes onboarding     |
-| `Linkrunner.setUserData`     | Authentication logic             | Every time app opens with logged-in user |
-| `Linkrunner.setAdditionalData` | Integration code                | When third-party integration IDs are available |
-| `Linkrunner.triggerDeeplink` | After navigation init            | Once after navigation is ready           |
-| `Linkrunner.trackEvent`      | Throughout app                   | When specific user actions occur         |
-| `Linkrunner.capturePayment`  | Payment processing               | When user makes a payment                |
-| `Linkrunner.removePayment`   | Refund flow                      | When payment needs to be removed         |
+| Function                      | Where to Place                   | When to Call                                   |
+| ----------------------------- | -------------------------------- | ---------------------------------------------- |
+| `Linkrunner.init`             | Main app initState or equivalent | Once when app starts                           |
+| `Linkrunner.signup`           | Onboarding flow                  | Once after user completes onboarding           |
+| `Linkrunner.setUserData`      | Authentication logic             | Every time app opens with logged-in user       |
+| `Linkrunner.setAdditionalData`| Inside your app's initialization flow | After the CleverTap ID or the additional data becomes available |
+| `Linkrunner.triggerDeeplink`  | After navigation init            | Once after navigation is ready                 |
+| `Linkrunner.trackEvent`       | Throughout app                   | When specific user actions occur               |
+| `Linkrunner.capturePayment`   | Payment processing               | When user makes a payment                      |
+| `Linkrunner.removePayment`    | Refund flow                      | When payment needs to be removed               |
 
 ## Complete Example
 
