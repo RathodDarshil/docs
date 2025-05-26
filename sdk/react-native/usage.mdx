@@ -115,6 +115,18 @@ const setUserData = async () => {
 };
 ```
 
+## Setting CleverTap ID
+
+Use the `setAdditionalData` method to set CleverTap ID:
+
+```javascript
+const setIntegrationData = async () => {
+    await linkrunner.setAdditionalData({
+        clevertapId: "YOUR_CLEVERTAP_USER_ID", // CleverTap user identifier
+    });
+};
+```
+
 ## Handling Deferred Deep Links
 
 `triggerDeeplink` is an optional function which has to be called once after the user onboards and the main stack is ready for navigation. This function handles deferred deep links (links that led to app installation):
@@ -205,15 +217,16 @@ Note: Either `paymentId` or `userId` must be provided when calling `removePaymen
 
 ## Function Placement Guide
 
-| Function                     | Where to Place           | When to Call                             |
-| ---------------------------- | ------------------------ | ---------------------------------------- |
-| `linkrunner.init`            | App.tsx within useEffect | Once when app starts                     |
-| `linkrunner.signup`          | Onboarding flow          | Once after user completes onboarding     |
-| `linkrunner.setUserData`     | Authentication logic     | Every time app opens with logged-in user |
-| `linkrunner.triggerDeeplink` | After navigation init    | Once after navigation is ready           |
-| `linkrunner.trackEvent`      | Throughout app           | When specific user actions occur         |
-| `linkrunner.capturePayment`  | Payment processing       | When user makes a payment                |
-| `linkrunner.removePayment`   | Refund flow              | When payment needs to be removed         |
+| Function                      | Where to Place                   | When to Call                                   |
+| ----------------------------- | ------------------------------ | ---------------------------------------------- |
+| `linkrunner.init`             | App.tsx within useEffect        | Once when app starts                           |
+| `linkrunner.signup`           | Onboarding flow                 | Once after user completes onboarding           |
+| `linkrunner.setUserData`      | Authentication logic            | Every time app opens with logged-in user       |
+| `linkrunner.setAdditionalData`| Inside your app's initialization flow | After the CleverTap ID or the additional data becomes available |
+| `linkrunner.triggerDeeplink`  | After navigation init           | Once after navigation is ready                 |
+| `linkrunner.trackEvent`       | Throughout app                  | When specific user actions occur               |
+| `linkrunner.capturePayment`   | Payment processing              | When user makes a payment                      |
+| `linkrunner.removePayment`    | Refund flow                     | When payment needs to be removed               |
 
 ## Support
 
