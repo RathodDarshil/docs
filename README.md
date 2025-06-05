@@ -29,3 +29,5 @@ Install our Github App to auto propagate changes from your repo to your deployme
 #### Troubleshooting
 
 - Mintlify dev isn't running - Run `mintlify install` it'll re-install dependencies.
+
+---
