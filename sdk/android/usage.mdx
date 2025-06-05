@@ -142,6 +142,30 @@ private fun setUserData() {
 }
 ```
 
+## Setting CleverTap ID
+
+Use the `setAdditionalData` method to set CleverTap ID:
+
+```kotlin
+private fun setIntegrationData() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val integrationData: IntegrationData = IntegrationData(clevertapId="YOUR_CLEVERTAP_ID")
+
+            val result = LinkRunner.getInstance().setAdditionalData(integrationData)
+
+            result.onSuccess {
+                println("CleverTap ID set successfully")
+            }.onFailure { error ->
+                println("Error setting CleverTap ID: ${error.message}")
+            }
+        } catch (e: Exception) {
+            println("Exception setting CleverTap ID: ${e.message}")
+        }
+    }
+}
+```
+
 ## Tracking Custom Events
 
 Track custom events in your app:
@@ -245,14 +269,15 @@ When PII hashing is enabled, sensitive user data like name, email, and phone num
 
 ## Function Placement Guide
 
-| Function                                  | Where to Place       | When to Call                             |
-| ----------------------------------------- | -------------------- | ---------------------------------------- |
-| `LinkRunner.getInstance().init`           | Application class    | Once when app starts                     |
-| `LinkRunner.getInstance().signup`         | Onboarding flow      | Once after user completes onboarding     |
-| `LinkRunner.getInstance().setUserData`    | Authentication logic | Every time app opens with logged-in user |
-| `LinkRunner.getInstance().trackEvent`     | Throughout app       | When specific user actions occur         |
-| `LinkRunner.getInstance().capturePayment` | Payment processing   | When user makes a payment                |
-| `LinkRunner.getInstance().removePayment`  | Refund flow          | When payment needs to be removed         |
+| Function                                   | Where to Place                      | When to Call                                   |
+| ------------------------------------------ | -------------------------------- | ---------------------------------------------- |
+| `LinkRunner.getInstance().init`            | Application class                  | Once when app starts                           |
+| `LinkRunner.getInstance().signup`          | Onboarding flow                    | Once after user completes onboarding           |
+| `LinkRunner.getInstance().setUserData`     | Authentication logic               | Every time app opens with logged-in user       |
+| `LinkRunner.getInstance().setAdditionalData`| Inside your app's initialization flow | After the CleverTap ID or the additional data becomes available |
+| `LinkRunner.getInstance().trackEvent`      | Throughout app                     | When specific user actions occur               |
+| `LinkRunner.getInstance().capturePayment`  | Payment processing                 | When user makes a payment                      |
+| `LinkRunner.getInstance().removePayment`   | Refund flow                        | When payment needs to be removed               |
 
 ## Complete Example
 
