@@ -16,7 +16,7 @@ You can find your project token [here](https://www.linkrunner.io/dashboard?s=mem
 
 ```kotlin
 import android.app.Application
-import com.linkrunner.sdk.LinkRunner
+import io.linkrunner.sdk.LinkRunner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,16 +174,18 @@ private fun trackEvent() {
 
 ### Capturing Payments
 
-Track payment information:
+Track payment information with the following details:
 
 ```kotlin
 private fun capturePayment() {
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val paymentData = CapturePaymentRequest(
-                paymentId = "payment456", // Optional: Unique payment identifier
-                userId = "user123", // User identifier
-                amount = 99.99 // Payment amount
+                paymentId = "payment_123",  // Optional: Unique payment identifier
+                userId = "user123",         // Required: User identifier
+                amount = 99.99,              // Required: Payment amount
+                type = PaymentType.FIRST_PAYMENT,  // Optional: Defaults to DEFAULT
+                status = PaymentStatus.PAYMENT_COMPLETED  // Optional: Defaults to PAYMENT_COMPLETED
             )
 
             val result = LinkRunner.getInstance().capturePayment(paymentData)
@@ -200,20 +202,43 @@ private fun capturePayment() {
 }
 ```
 
+#### Available Payment Types
+
+| Type | Description |
+|------|-------------|
+| `FIRST_PAYMENT` | User's first payment |
+| `WALLET_TOPUP` | Adding funds to wallet |
+| `FUNDS_WITHDRAWAL` | Withdrawing funds |
+| `SUBSCRIPTION_CREATED` | New subscription created |
+| `SUBSCRIPTION_RENEWED` | Subscription renewal |
+| `ONE_TIME` | One-time payment |
+| `RECURRING` | Recurring payment |
+| `DEFAULT` | Default payment type |
+
+#### Available Payment Statuses
+
+| Status | Description |
+|--------|-------------|
+| `PAYMENT_INITIATED` | Payment process started |
+| `PAYMENT_COMPLETED` | Payment successfully completed |
+| `PAYMENT_FAILED` | Payment failed |
+| `PAYMENT_CANCELLED` | Payment was cancelled |
+
 ### Removing Payments
 
-Remove payment records (for refunds or cancellations):
+To remove or refund a payment:
 
 ```kotlin
 private fun removePayment() {
     CoroutineScope(Dispatchers.IO).launch {
         try {
-            val removePayment = RemovePaymentRequest(
-                paymentId = "payment456", // Optional: Unique payment identifier
-                userId = "user123" // Optional: User identifier
+            // Either paymentId or userId must be provided
+            val removeRequest = RemovePaymentRequest(
+                paymentId = "payment_123",  // Optional: Payment ID to remove
+                userId = "user123"           // Optional: User ID to remove payments for
             )
 
-            val result = LinkRunner.getInstance().removePayment(removePayment)
+            val result = LinkRunner.getInstance().removePayment(removeRequest)
 
             result.onSuccess {
                 println("Payment removed successfully")
@@ -226,8 +251,6 @@ private fun removePayment() {
     }
 }
 ```
-
-Note: Either `paymentId` or `userId` must be provided when calling `removePayment`. If only `userId` is provided, all payments for that user will be removed.
 
 ## Enhanced Privacy Controls
 
@@ -264,8 +287,8 @@ You can find your project token [here](https://www.linkrunner.io/dashboard?s=mem
 import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.linkrunner.sdk.LinkRunner
-import com.linkrunner.sdk.models.request.UserDataRequest
+import io.linkrunner.sdk.LinkRunner
+import io.linkrunner.sdk.models.request.UserDataRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
